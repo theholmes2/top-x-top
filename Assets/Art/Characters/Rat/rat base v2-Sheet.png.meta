@@ -1,0 +1,248 @@
+fileFormatVersion: 2
+guid: 4218d44d5674a1e4485af709dc0e2a22
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4356651741459562575
+    second: rat base v2-Sheet_0
+  - first:
+      213: 9010366943343214587
+    second: rat base v2-Sheet_1
+  - first:
+      213: 8220122575663041413
+    second: rat base v2-Sheet_2
+  - first:
+      213: 4528950622974884336
+    second: rat base v2-Sheet_3
+  - first:
+      213: -5029292366627913125
+    second: rat base v2-Sheet_4
+  - first:
+      213: 3403462893720720360
+    second: rat base v2-Sheet_5
+  - first:
+      213: -3965665278027449090
+    second: rat base v2-Sheet_6
+  - first:
+      213: -5783532962349768871
+    second: rat base v2-Sheet_7
+  - first:
+      213: -8558700367936667700
+    second: rat base v2-Sheet_8
+  - first:
+      213: -2750939472093232443
+    second: rat base v2-Sheet_9
+  - first:
+      213: 2077710964253532724
+    second: rat base v2-Sheet_10
+  - first:
+      213: 7782670590893068309
+    second: rat base v2-Sheet_11
+  - first:
+      213: 6241400733332611707
+    second: rat base v2-Sheet_12
+  - first:
+      213: -4595916031192647590
+    second: rat base v2-Sheet_13
+  - first:
+      213: 3299980743699747214
+    second: rat base v2-Sheet_14
+  - first:
+      213: -8999320540632152761
+    second: rat base v2-Sheet_15
+  - first:
+      213: 7413723458073878020
+    second: rat base v2-Sheet_16
+  - first:
+      213: -3281379764128518011
+    second: rat base v2-Sheet_17
+  - first:
+      213: -4164927211740034110
+    second: rat base v2-Sheet_18
+  - first:
+      213: -5847860865567848853
+    second: rat base v2-Sheet_19
+  - first:
+      213: 9076994687111441151
+    second: rat base v2-Sheet_20
+  - first:
+      213: 4574862609590233029
+    second: rat base v2-Sheet_21
+  - first:
+      213: -7590641903951158604
+    second: rat base v2-Sheet_22
+  - first:
+      213: 2263868053453748258
+    second: rat base v2-Sheet_23
+  - first:
+      213: -3003718398115811623
+    second: rat base v2-Sheet_24
+  - first:
+      213: 6421908881165488369
+    second: rat base v2-Sheet_25
+  - first:
+      213: 681135639920232939
+    second: rat base v2-Sheet_26
+  - first:
+      213: 1887495783757182374
+    second: rat base v2-Sheet_27
+  - first:
+      213: 5448755943338737548
+    second: rat base v2-Sheet_28
+  - first:
+      213: -2048962656565796470
+    second: rat base v2-Sheet_29
+  - first:
+      213: 2405814539826030843
+    second: rat base v2-Sheet_30
+  - first:
+      213: 968486008289927167
+    second: rat base v2-Sheet_31
+  - first:
+      213: 257717698177061375
+    second: rat base v2-Sheet_32
+  - first:
+      213: -1177372568573740831
+    second: rat base v2-Sheet_33
+  - first:
+      213: 4428702098596237586
+    second: rat base v2-Sheet_34
+  - first:
+      213: 3767386550001653812
+    second: rat base v2-Sheet_35
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RatIdle
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b1c4dad3c8cce447b33b6e4caf77da5
+      internalID: -1066177551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: d7593c79fd961a343a346d58cf0e92fe
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RatIdle: -1066177551
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

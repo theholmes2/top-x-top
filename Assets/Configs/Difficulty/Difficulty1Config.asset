@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ba7afe14f45f8546a58223161ea1a8b, type: 3}
+  m_Name: Difficulty1Config
+  m_EditorClassIdentifier: Assembly-CSharp::TopXTop.Difficulty.DifficultyConfig
+  difficultyId: 1
+  maxTotalSpawnCount: 1
+  enemies:
+  - prefab: {fileID: 110188202475069058, guid: eabcc350705c93245b4d61d6606b498c, type: 3}
+    maxSpawnCount: 1

@@ -1,0 +1,445 @@
+fileFormatVersion: 2
+guid: 0dadbd8374a8a704eb79d47cb942618a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2102012904090024682
+    second: forest_ruins_manual_slice_transparent_0
+  - first:
+      213: -7915495171413586193
+    second: forest_ruins_manual_slice_transparent_1
+  - first:
+      213: 5104232990508858507
+    second: forest_ruins_manual_slice_transparent_2
+  - first:
+      213: -6633094461363009967
+    second: forest_ruins_manual_slice_transparent_3
+  - first:
+      213: -8474392533046213735
+    second: forest_ruins_manual_slice_transparent_4
+  - first:
+      213: -8583763788609489516
+    second: forest_ruins_manual_slice_transparent_5
+  - first:
+      213: 7610084935382230337
+    second: forest_ruins_manual_slice_transparent_6
+  - first:
+      213: 5288770032143512155
+    second: forest_ruins_manual_slice_transparent_7
+  - first:
+      213: -2692471621097024194
+    second: forest_ruins_manual_slice_transparent_8
+  - first:
+      213: -7286471930568698814
+    second: forest_ruins_manual_slice_transparent_9
+  - first:
+      213: -2090291683496827686
+    second: forest_ruins_manual_slice_transparent_10
+  - first:
+      213: -4026203199423104194
+    second: forest_ruins_manual_slice_transparent_11
+  - first:
+      213: -6457477427783733448
+    second: forest_ruins_manual_slice_transparent_12
+  - first:
+      213: -1575014809959266908
+    second: forest_ruins_manual_slice_transparent_13
+  - first:
+      213: 8014457271815397147
+    second: forest_ruins_manual_slice_transparent_14
+  - first:
+      213: -8482871799209386649
+    second: forest_ruins_manual_slice_transparent_15
+  - first:
+      213: -2710642696608064579
+    second: forest_ruins_manual_slice_transparent_16
+  - first:
+      213: -5925288385639443936
+    second: forest_ruins_manual_slice_transparent_17
+  - first:
+      213: 8426287481914787675
+    second: forest_ruins_manual_slice_transparent_18
+  - first:
+      213: -1489755961089227756
+    second: forest_ruins_manual_slice_transparent_19
+  - first:
+      213: -3351581972889889769
+    second: forest_ruins_manual_slice_transparent_20
+  - first:
+      213: 9033559604931750732
+    second: forest_ruins_manual_slice_transparent_21
+  - first:
+      213: 8432002985119381749
+    second: forest_ruins_manual_slice_transparent_22
+  - first:
+      213: 1201669976658397336
+    second: forest_ruins_manual_slice_transparent_23
+  - first:
+      213: 266026001637358946
+    second: forest_ruins_manual_slice_transparent_24
+  - first:
+      213: -1556534287718332076
+    second: forest_ruins_manual_slice_transparent_25
+  - first:
+      213: -5095916197259814246
+    second: forest_ruins_manual_slice_transparent_26
+  - first:
+      213: 5131998224463886325
+    second: forest_ruins_manual_slice_transparent_27
+  - first:
+      213: -3143715383642660031
+    second: forest_ruins_manual_slice_transparent_28
+  - first:
+      213: -4150331926491035465
+    second: forest_ruins_manual_slice_transparent_29
+  - first:
+      213: -4170140953635028813
+    second: forest_ruins_manual_slice_transparent_30
+  - first:
+      213: 8947225893015695397
+    second: forest_ruins_manual_slice_transparent_31
+  - first:
+      213: -7243239392852619644
+    second: forest_ruins_manual_slice_transparent_32
+  - first:
+      213: 6006732241105543956
+    second: forest_ruins_manual_slice_transparent_33
+  - first:
+      213: -6397433937545217585
+    second: forest_ruins_manual_slice_transparent_34
+  - first:
+      213: -5928976663243123301
+    second: forest_ruins_manual_slice_transparent_35
+  - first:
+      213: -6127725760722861859
+    second: forest_ruins_manual_slice_transparent_36
+  - first:
+      213: 8207095922476282583
+    second: forest_ruins_manual_slice_transparent_37
+  - first:
+      213: -6060490581820485859
+    second: forest_ruins_manual_slice_transparent_38
+  - first:
+      213: -1029117186776648737
+    second: forest_ruins_manual_slice_transparent_39
+  - first:
+      213: -8806390949118233154
+    second: forest_ruins_manual_slice_transparent_40
+  - first:
+      213: 6272491364044803906
+    second: forest_ruins_manual_slice_transparent_41
+  - first:
+      213: 8209967171455486202
+    second: forest_ruins_manual_slice_transparent_42
+  - first:
+      213: -1261851672630410454
+    second: forest_ruins_manual_slice_transparent_43
+  - first:
+      213: 2148851745910902952
+    second: forest_ruins_manual_slice_transparent_44
+  - first:
+      213: -7072455619076445967
+    second: forest_ruins_manual_slice_transparent_45
+  - first:
+      213: 924097196660030446
+    second: forest_ruins_manual_slice_transparent_46
+  - first:
+      213: 9188328260006049713
+    second: forest_ruins_manual_slice_transparent_47
+  - first:
+      213: -3305085757578108541
+    second: forest_ruins_manual_slice_transparent_48
+  - first:
+      213: 699837417430378391
+    second: forest_ruins_manual_slice_transparent_49
+  - first:
+      213: 7686290191350558536
+    second: forest_ruins_manual_slice_transparent_50
+  - first:
+      213: -8203396402769135633
+    second: forest_ruins_manual_slice_transparent_51
+  - first:
+      213: -99187241296731292
+    second: forest_ruins_manual_slice_transparent_52
+  - first:
+      213: -3106829693420368119
+    second: forest_ruins_manual_slice_transparent_53
+  - first:
+      213: -6419748310185742212
+    second: forest_ruins_manual_slice_transparent_54
+  - first:
+      213: 5360657843307028019
+    second: forest_ruins_manual_slice_transparent_55
+  - first:
+      213: 2833599189542101578
+    second: forest_ruins_manual_slice_transparent_56
+  - first:
+      213: 901099843724650086
+    second: forest_ruins_manual_slice_transparent_57
+  - first:
+      213: 1911027476640640539
+    second: forest_ruins_manual_slice_transparent_58
+  - first:
+      213: -9000788896201262195
+    second: forest_ruins_manual_slice_transparent_59
+  - first:
+      213: 3548493531053634540
+    second: forest_ruins_manual_slice_transparent_60
+  - first:
+      213: -7532808406615189552
+    second: forest_ruins_manual_slice_transparent_61
+  - first:
+      213: -438033442725550511
+    second: forest_ruins_manual_slice_transparent_62
+  - first:
+      213: 7384923028003242137
+    second: forest_ruins_manual_slice_transparent_63
+  - first:
+      213: 480401643586586981
+    second: forest_ruins_manual_slice_transparent_64
+  - first:
+      213: -5096479767790308765
+    second: forest_ruins_manual_slice_transparent_65
+  - first:
+      213: 3862655732717918862
+    second: forest_ruins_manual_slice_transparent_66
+  - first:
+      213: -4677924475808298254
+    second: forest_ruins_manual_slice_transparent_67
+  - first:
+      213: -1187024305094580819
+    second: forest_ruins_manual_slice_transparent_68
+  - first:
+      213: -8666355299388504158
+    second: forest_ruins_manual_slice_transparent_69
+  - first:
+      213: -788219138126092366
+    second: forest_ruins_manual_slice_transparent_70
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: GrassGround
+      rect:
+        serializedVersion: 2
+        x: 634
+        y: 489
+        width: 108
+        height: 94
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9d0de71e93ac7444891bdae25e5dab3
+      internalID: -2039286175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tree
+      rect:
+        serializedVersion: 2
+        x: 1225
+        y: 49
+        width: 297
+        height: 287
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6271752f4d4828e439fd149d38263012
+      internalID: 150813166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RuinedArch
+      rect:
+        serializedVersion: 2
+        x: 1045
+        y: 49
+        width: 202
+        height: 188
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fba3b22b523ad84caa49f49a8e1d249
+      internalID: 779962312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pillar
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 47
+        width: 91
+        height: 174
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a55fa03c628d9a8449eba105019e0ab2
+      internalID: -52721440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fern
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 49
+        width: 108
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3039af3572cebad4ca8809f76841ab52
+      internalID: -1523679814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: e1df130c6b26fdb4b84d63d38a45318e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Fern: -1523679814
+      GrassGround: -2039286175
+      Pillar: -52721440
+      RuinedArch: 779962312
+      Tree: 150813166
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
