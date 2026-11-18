@@ -160,3 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TopXTop.Character.CharacterAnimationGlue
   animator: {fileID: 3875291327092586527}
+  attackOneClip: {fileID: 7400000, guid: fe7364a8058a826408e52abf93caa300, type: 2}
+  attackTwoClip: {fileID: 7400000, guid: 0e346f1670712324f828d588b6174b49, type: 2}
+  attackThreeClip: {fileID: 7400000, guid: a62d88fd21ea4c4498f1c42e72cb715c, type: 2}
+  body: {fileID: 3558762670239727663}

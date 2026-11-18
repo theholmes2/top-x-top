@@ -46,6 +46,12 @@ namespace TopXTop.Skill
             this.powerPermille = powerPermille;
         }
 
+        /// <summary>피해와 쿨타임을 바꾸지 않고 예약 시각의 스킬 사용 가능 여부를 확인합니다.</summary>
+        public bool CanUse(long atMs, CharacterState target)
+        {
+            return atMs >= NextUseAtMs && atMs <= long.MaxValue - cooldownMs && attack.CanAttack(target);
+        }
+
         /// <summary>피해량이 필요 없는 호출자에게 스킬 실행 성공 여부를 제공합니다.</summary>
         /// <param name="nowMs">호출자가 공급한 게임 시각입니다.</param>
         /// <param name="target">이번 공격 대상입니다.</param>

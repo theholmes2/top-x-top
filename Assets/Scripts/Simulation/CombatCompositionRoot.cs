@@ -38,10 +38,6 @@ namespace TopXTop.Simulation
         [SerializeField]
         private Transform backPoint;
 
-        /// <summary>사망 연출을 표시할 씬 위치입니다.</summary>
-        [SerializeField]
-        private Transform deathPoint;
-
         /// <summary>숲 반복 구간을 이동시키는 씬 연결부입니다.</summary>
         [SerializeField]
         private BackgroundScrollGlue background;
@@ -49,6 +45,22 @@ namespace TopXTop.Simulation
         /// <summary>배경과 몬스터가 공유하는 초당 월드 이동 거리입니다.</summary>
         [SerializeField, Min(0.01f)]
         private float moveSpeed = 0.9f;
+
+        /// <summary>대시 중 배경과 적이 공유하는 임시 속도입니다.</summary>
+        [SerializeField, Min(0.01f)]
+        private float dashSpeed = 4f;
+
+        /// <summary>대시를 표시할 수 있는 최소·최대 이동 거리입니다.</summary>
+        [SerializeField]
+        private Vector2 dashDistance = new Vector2(0.24f, 0.9f);
+
+        /// <summary>대시 끝에 겹칠 베기 연출의 최소·최대 게임 시간입니다.</summary>
+        [SerializeField]
+        private Vector2 slashSeconds = new Vector2(0.045f, 0.12f);
+
+        /// <summary>모든 기본공격의 접촉 직후 이동과 다음 공격을 막는 게임 시간입니다.</summary>
+        [SerializeField, Min(0)]
+        private int attackRecoveryMs = 400;
 
         /// <summary>씬에서 공격 성공 연출을 받을 플레이어 외형입니다.</summary>
         [SerializeField]
@@ -66,11 +78,18 @@ namespace TopXTop.Simulation
                 throw new InvalidOperationException("Player/시작 난이도/기본공격 Config와 적 스폰 위치 참조가 필요합니다.");
             }
 
-            if (!frontPoint || !backPoint || !deathPoint || !background ||
+            if (!frontPoint || !backPoint || !background ||
                 backPoint.position.x < frontPoint.position.x || enemySpawnPoint.position.x <= backPoint.position.x ||
                 !(moveSpeed > 0f) || float.IsInfinity(moveSpeed))
             {
-                throw new InvalidOperationException("전투 앞칸·뒤쪽 경계·우측 스폰·사망 지점·배경과 양수 이동 속도를 지정해야 합니다.");
+                throw new InvalidOperationException("전투 앞칸·뒤쪽 경계·우측 스폰 지점·배경과 양수 이동 속도를 지정해야 합니다.");
+            }
+
+            if (!(dashSpeed > moveSpeed) || float.IsInfinity(dashSpeed) ||
+                !(dashDistance.x > 0f && dashDistance.y >= dashDistance.x) ||
+                !(slashSeconds.x > 0f && slashSeconds.y >= slashSeconds.x))
+            {
+                throw new InvalidOperationException("대시 속도와 최소·최대 거리, 베기 시간을 확인해야 합니다.");
             }
 
             if (!startingDifficulty.TryValidate(out string error))
@@ -93,7 +112,12 @@ namespace TopXTop.Simulation
                 basicAttackConfig.BaseCooldownMs,
                 basicAttackConfig.PowerPermille);
 
+            var approach = new ApproachBrick(moveSpeed, dashSpeed, dashDistance.x, dashDistance.y,
+                slashSeconds.x, slashSeconds.y);
+
             builder.RegisterInstance(player);
+            builder.RegisterInstance(approach);
+            builder.Register<DashGhostTrailGlue>(Lifetime.Singleton);
             builder.RegisterInstance(basicAttack);
 
             // Singleton은 이 컨테이너 안에서 공유하며 실제 생성과 IDisposable 추적도 컨테이너가 맡습니다.
@@ -109,9 +133,9 @@ namespace TopXTop.Simulation
                 .WithParameter("spawnPoint", enemySpawnPoint)
                 .WithParameter("frontPoint", frontPoint)
                 .WithParameter("backPoint", backPoint)
-                .WithParameter("deathPoint", deathPoint)
                 .WithParameter(background)
                 .WithParameter(moveSpeed)
+                .WithParameter("attackRecoveryMs", attackRecoveryMs)
                 .WithParameter<CharacterAnimationGlue>(playerAnimation);
         }
     }

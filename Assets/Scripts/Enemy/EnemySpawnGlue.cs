@@ -27,7 +27,7 @@ namespace TopXTop.Enemy
             }
         }
 
-        /// <summary>사망 지점으로 이동하고 연출을 마칠 때까지 유지할 대여입니다.</summary>
+        /// <summary>배경과 함께 이동하며 사망 연출을 마칠 때까지 유지할 대여입니다.</summary>
         private readonly struct DyingEnemy
         {
             /// <summary>사망 연출을 표시하는 적입니다.</summary>
@@ -36,18 +36,14 @@ namespace TopXTop.Enemy
             /// <summary>이 대여와 이후 대여를 구분하는 State입니다.</summary>
             public readonly EnemyState State;
 
-            /// <summary>이번 사망을 표시할 월드 위치입니다.</summary>
-            public readonly Vector3 Destination;
-
             /// <summary>Animator 완료를 기다리는 게임 시각 상한입니다.</summary>
             public readonly long AnimationDeadlineMs;
 
-            /// <summary>이동과 연출 완료를 기다리는 대여 정보를 기록합니다.</summary>
-            public DyingEnemy(EnemyGlue instance, EnemyState state, Vector3 destination, long animationDeadlineMs)
+            /// <summary>연출 완료를 기다리는 대여 정보를 기록합니다.</summary>
+            public DyingEnemy(EnemyGlue instance, EnemyState state, long animationDeadlineMs)
             {
                 Instance = instance;
                 State = state;
-                Destination = destination;
                 AnimationDeadlineMs = animationDeadlineMs;
             }
         }
@@ -188,6 +184,12 @@ namespace TopXTop.Enemy
                 return false;
             }
 
+            bool fadeIn = active.Count > 0;
+            if (fadeIn)
+            {
+                position.x = GetNextSlotX();
+            }
+
             EnemyGlue rented = null;
             try
             {
@@ -198,6 +200,11 @@ namespace TopXTop.Enemy
                 RefreshDisplayOrder();
                 rented.gameObject.SetActive(true);
                 rented.ShowIdle();
+                if (fadeIn)
+                {
+                    rented.BeginSpawnFade();
+                }
+
                 instance = rented;
                 return true;
             }
@@ -220,10 +227,20 @@ namespace TopXTop.Enemy
             }
         }
 
-        /// <summary>활성 줄과 사망 대여를 같은 거리 제한으로 갱신하고 실제 이동 거리의 최댓값을 반환합니다.</summary>
+        /// <summary>현재 줄 바로 뒤 칸을 계산합니다. 앞선 적이 당겨지는 중이면 그 줄의 위치를 따릅니다.</summary>
+        private float GetNextSlotX()
+        {
+            int tailIndex = active.Count - 1;
+            float tailSlotX = frontX + tailIndex * slotSpacing;
+            float tailOffset = Mathf.Max(0f, active[tailIndex].Instance.transform.position.x - tailSlotX);
+            return frontX + active.Count * slotSpacing + tailOffset;
+        }
+
+        /// <summary>생존 적을 전진시키고 실제 이동 거리의 최댓값으로 사망 연출을 함께 이동시킵니다.</summary>
         /// <param name="distance">이번 프레임에 각 적이 이동할 수 있는 최대 거리입니다.</param>
         /// <param name="nowMs">Animator 완료 제한을 확인할 게임 시각입니다.</param>
-        public float AdvanceMovement(float distance, long nowMs)
+        /// <param name="deltaSeconds">이번 프레임의 페이드에 적용할 게임 시간입니다.</param>
+        public float AdvanceMovement(float distance, long nowMs, float deltaSeconds)
         {
             float maxDistance = 0f;
             float movementLimit = Mathf.Max(0f, distance);
@@ -235,6 +252,7 @@ namespace TopXTop.Enemy
                     continue;
                 }
 
+                instance.AdvanceSpawnFade(deltaSeconds);
                 Vector3 destination = instance.transform.position;
                 destination.x = frontX + i * slotSpacing;
                 maxDistance = Mathf.Max(maxDistance, MoveEnemy(instance.transform, destination, movementLimit));
@@ -249,14 +267,17 @@ namespace TopXTop.Enemy
                     continue;
                 }
 
-                Transform mover = entry.Instance.transform;
-                maxDistance = Mathf.Max(maxDistance, MoveEnemy(mover, entry.Destination, movementLimit));
-
-                bool arrived = mover.position.Equals(entry.Destination);
-                if (arrived && (nowMs >= entry.AnimationDeadlineMs || entry.Instance.IsDeathFinished()))
+                if (nowMs >= entry.AnimationDeadlineMs || entry.Instance.IsDeathFinished())
                 {
                     dying.RemoveAt(i);
                     pool.TryReturn(entry.Instance);
+                    continue;
+                }
+
+                if (maxDistance > 0f)
+                {
+                    Transform mover = entry.Instance.transform;
+                    mover.position += Vector3.left * maxDistance;
                 }
             }
 
@@ -296,9 +317,8 @@ namespace TopXTop.Enemy
 
         /// <summary>사망한 적의 스폰 점유를 한 번 해제하고 현재 위치에서 사망 연출을 시작합니다.</summary>
         /// <param name="instance">이번 타격으로 사망한 적입니다.</param>
-        /// <param name="deathPosition">사망한 적이 이동할 월드 위치입니다.</param>
         /// <param name="nowMs">사망이 확정된 게임 시각입니다.</param>
-        public bool TryBeginDeath(EnemyGlue instance, Vector3 deathPosition, long nowMs)
+        public bool TryBeginDeath(EnemyGlue instance, long nowMs)
         {
             if (disposed || instance == null || instance.State == null || instance.State.IsAlive)
             {
@@ -312,11 +332,16 @@ namespace TopXTop.Enemy
             }
 
             ReleaseActive(index);
-            bool playingDeath = instance.TryPlayDeath();
-            long animationDeadlineMs = playingDeath
-                ? Math.Min(nowMs, long.MaxValue - DeathTimeoutMs) + DeathTimeoutMs
-                : nowMs;
-            dying.Add(new DyingEnemy(instance, instance.State, deathPosition, animationDeadlineMs));
+            if (instance.TryPlayDeath())
+            {
+                long animationDeadlineMs = Math.Min(nowMs, long.MaxValue - DeathTimeoutMs) + DeathTimeoutMs;
+                dying.Add(new DyingEnemy(instance, instance.State, animationDeadlineMs));
+            }
+            else
+            {
+                pool.TryReturn(instance);
+            }
+
             return true;
         }
 

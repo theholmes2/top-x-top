@@ -1,0 +1,66 @@
+
+var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+int checks = 0;
+void Check(bool value, string label)
+{
+    if (!value)
+    {
+        throw new System.Exception(label);
+    }
+    checks++;
+}
+var config = UnityEditor.AssetDatabase.LoadAssetAtPath<TopXTop.Difficulty.DifficultyConfig>("Assets/Configs/Difficulty/Difficulty2Config.asset");
+var builder = new VContainer.ContainerBuilder();
+VContainer.ContainerBuilderExtensions.Register<TopXTop.Combat.CombatHitBus>(builder, VContainer.Lifetime.Singleton);
+VContainer.ContainerBuilderExtensions.Register<TopXTop.Enemy.EnemyPoolGlue>(builder, VContainer.Lifetime.Singleton);
+VContainer.ContainerBuilderExtensions.Register<TopXTop.Enemy.EnemySpawnGlue>(builder, VContainer.Lifetime.Singleton);
+var container = builder.Build();
+var bus = (TopXTop.Combat.CombatHitBus)container.Resolve(typeof(TopXTop.Combat.CombatHitBus));
+var spawner = (TopXTop.Enemy.EnemySpawnGlue)container.Resolve(typeof(TopXTop.Enemy.EnemySpawnGlue));
+var point = new UnityEngine.GameObject("EliminationSpawnVerification");
+var skill = new TopXTop.Skill.SkillUseBrick(new TopXTop.Combat.AttackBrick(new TopXTop.Enemy.EnemyState(100, 500, 0)), 1, 1000);
+var schedule = new TopXTop.Enemy.SpawnScheduleBrick(1000);
+var tick = new TopXTop.Simulation.SimulationTickGlue(skill, spawner, schedule, config, point.transform, bus, null, point.transform, point.transform, null, 1f);
+try
+{
+    tick.Start();
+    long start = schedule.NextSpawnAtMs - 1000;
+    var first = spawner.GetCombatTarget();
+    Check(spawner.TrySpawnNext(point.transform.position, out var second), "second enemy added");
+    var firstState = first.State;
+    var secondState = second.State;
+    first.GetComponentInChildren<UnityEngine.Animator>().Rebind();
+    first.GetComponentInChildren<UnityEngine.Animator>().Update(0f);
+    second.GetComponentInChildren<UnityEngine.Animator>().Rebind();
+    second.GetComponentInChildren<UnityEngine.Animator>().Update(0f);
+    tick.TickAt(start + 200, 0.2f);
+    Check(!firstState.IsAlive && spawner.ActiveCount == 1 && spawner.GetFirstLivingEnemy() == second, "2 to 1 without replenishment");
+    Check(schedule.NextSpawnAtMs == start + 1000, "nonfinal kill preserves regular schedule");
+    Check(first.gameObject.activeSelf && first.GetComponentInChildren<UnityEngine.Animator>().GetCurrentAnimatorStateInfo(0).IsName("Death"), "dying object still visible outside active count");
+    tick.TickAt(start + 599, 0.399f);
+    Check(spawner.ActiveCount == 1 && second.State.IsAlive, "recovery prevents early next hit");
+    tick.TickAt(start + 600, 0.001f);
+    var replacement = spawner.GetFirstLivingEnemy();
+    Check(spawner.ActiveCount == 1 && !secondState.IsAlive && replacement != second, "final kill replenishes one same Tick");
+    Check(first.gameObject.activeSelf && second.gameObject.activeSelf, "replenishment while dying objects remain");
+    Check(schedule.NextSpawnAtMs == start + 1000, "elimination replenishment preserves regular schedule");
+    tick.TickAt(start + 600);
+    Check(spawner.ActiveCount == 1, "same time repeated Tick cannot replenish twice");
+    tick.TickAt(start + 999, 0.399f);
+    Check(spawner.ActiveCount == 1 && replacement.State.IsAlive, "common 400ms recovery maintained");
+    var replacementState = replacement.State;
+    tick.TickAt(start + 1000, 0.001f);
+    Check(!replacementState.IsAlive && spawner.ActiveCount == 1, "regular spawn precedes simultaneous kill without extra replenishment");
+    Check(schedule.NextSpawnAtMs == start + 2000, "regular opportunity alone advances schedule");
+    var survivor = spawner.GetFirstLivingEnemy();
+    Check(survivor != null && survivor.State.IsAlive, "regularly spawned enemy survives");
+    Check(spawner.TrySpawnNext(point.transform.position, out _) && spawner.TrySpawnNext(point.transform.position, out _) && !spawner.TrySpawnNext(point.transform.position, out _) && spawner.ActiveCount == 3, "overall and type limits retained");
+    return $"{checks} elimination policy checks PASS";
+}
+finally
+{
+    tick.Dispose();
+    container.Dispose();
+    UnityEngine.Object.Destroy(point);
+}
+

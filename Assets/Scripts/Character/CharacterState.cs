@@ -14,6 +14,9 @@ namespace TopXTop.Character
         /// <summary>최대 HP입니다. 범위는 1부터 int.MaxValue까지입니다.</summary>
         public int MaxHp { get; private set; }
 
+        /// <summary>현재·최대 체력이 바뀐 작업의 최종 값 한 쌍을 전달합니다.</summary>
+        public event Action<int, int> HpChanged;
+
         /// <summary>현재 공격력입니다. 범위는 0부터 int.MaxValue까지입니다.</summary>
         public int Attack { get; private set; }
 
@@ -35,7 +38,12 @@ namespace TopXTop.Character
         /// <summary>현재 HP를 증감합니다. 양수는 회복, 음수는 감소이며 0~MaxHp로 제한합니다.</summary>
         public void ChangeHp(int amount)
         {
+            int previousHp = CurrentHp;
             CurrentHp = (int)Math.Max(0L, Math.Min(MaxHp, (long)CurrentHp + amount));
+            if (CurrentHp != previousHp)
+            {
+                HpChanged?.Invoke(CurrentHp, MaxHp);
+            }
         }
 
         /// <summary>
@@ -49,11 +57,16 @@ namespace TopXTop.Character
 
             if (MaxHp > previousMaxHp)
             {
-                ChangeHp(MaxHp - previousMaxHp);
+                CurrentHp += MaxHp - previousMaxHp;
             }
             else
             {
                 CurrentHp = Math.Min(CurrentHp, MaxHp);
+            }
+
+            if (MaxHp != previousMaxHp)
+            {
+                HpChanged?.Invoke(CurrentHp, MaxHp);
             }
         }
 

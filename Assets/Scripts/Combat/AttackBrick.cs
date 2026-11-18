@@ -22,6 +22,12 @@ namespace TopXTop.Combat
             this.attacker = attacker ?? throw new ArgumentNullException(nameof(attacker));
         }
 
+        /// <summary>상태를 변경하지 않고 살아 있는 서로 다른 개체 사이의 공격인지 확인합니다.</summary>
+        public bool CanAttack(CharacterState target)
+        {
+            return target != null && !ReferenceEquals(attacker, target) && attacker.IsAlive && target.IsAlive;
+        }
+
         /// <summary>
         /// 공격자와 대상이 살아 있는 서로 다른 개체라면 공격을 한 번 적용합니다.
         /// 방어력 때문에 피해가 0이어도 공격은 실행한 것으로 처리합니다.
@@ -43,12 +49,7 @@ namespace TopXTop.Combat
                 throw new ArgumentOutOfRangeException(nameof(powerPermille));
             }
 
-            if (target == null || ReferenceEquals(attacker, target))
-            {
-                return false;
-            }
-
-            if (!attacker.IsAlive || !target.IsAlive)
+            if (!CanAttack(target))
             {
                 return false;
             }

@@ -1,0 +1,171 @@
+
+int checks = 0;
+var notes = new System.Collections.Generic.List<string>();
+System.Action<bool, string> check = (ok, label) => { if (!ok) throw new System.Exception(label); checks++; };
+var skill = new TopXTop.Skill.SkillUseBrick(new TopXTop.Combat.AttackBrick(new TopXTop.Enemy.EnemyState(60, 8, 0)), 1000, 1000);
+var targetA = new TopXTop.Enemy.EnemyState(45, 1, 0);
+var targetB = new TopXTop.Enemy.EnemyState(45, 1, 0);
+check(skill.TryUse(0, targetA) && targetA.CurrentHp == 37, "First immediate attack");
+check(!skill.TryUse(999, targetB) && targetB.CurrentHp == 45 && skill.NextUseAtMs == 1000, "Target change preserves cooldown");
+check(skill.TryUse(1000, targetB) && targetB.CurrentHp == 37, "New target at ready time");
+check(!skill.TryUse(2000, null) && skill.NextUseAtMs == 2000, "Missing target does not consume");
+targetA.ChangeHp(-100);
+check(!skill.TryUse(2000, targetA) && skill.NextUseAtMs == 2000, "Dead target does not consume");
+check(skill.TryUse(10000, targetB) && targetB.CurrentHp == 29 && skill.NextUseAtMs == 11000, "Late time one attack");
+check(!skill.TryUse(10000, targetB), "No same time duplicate");
+bool refused = false;
+try { skill.TryUse(long.MaxValue, targetB); } catch (System.ArgumentOutOfRangeException) { refused = true; }
+check(refused && targetB.CurrentHp == 29, "Overflow before damage");
+var schedule = new TopXTop.Enemy.SpawnScheduleBrick(1000);
+check(schedule.TryTakeOpportunity(0) && !schedule.TryTakeOpportunity(0), "Immediate one spawn opportunity");
+check(!schedule.TryTakeOpportunity(999) && schedule.TryTakeOpportunity(1000), "1000ms opportunity");
+check(schedule.TryTakeOpportunity(10000) && schedule.NextSpawnAtMs == 11000 && !schedule.TryTakeOpportunity(10000), "Late spawn no backlog");
+var counts = new TopXTop.Enemy.SpawnCountBrick(new int[] { 2, 1 }, 2);
+check(counts.TryAcquire(0) && counts.TryAcquire(0) && !counts.TryAcquire(1) && counts.TotalCount == 2, "Overall cap distinct from kind cap");
+check(counts.TryRelease(0) && counts.TryAcquire(1) && !counts.TryAcquire(1), "Independent kind cap");
+var larger = new TopXTop.Enemy.SpawnCountBrick(new int[] { 2, 1 }, 10);
+check(larger.TryAcquire(0) && larger.TryAcquire(0) && larger.TryAcquire(1) && !larger.TryAcquire(0) && !larger.TryAcquire(1), "Overall greater than sum valid");
+notes.Add("순수 시간·대상 교체·전체/종류별 상한 PASS");
+var previousScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+bool previousDirty = previousScene.isDirty;
+var scene = UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.SceneManagement.NewSceneSetup.EmptyScene, UnityEditor.SceneManagement.NewSceneMode.Additive);
+var builder = new VContainer.ContainerBuilder();
+VContainer.ContainerBuilderExtensions.Register<TopXTop.Combat.CombatHitBus>(builder, VContainer.Lifetime.Singleton);
+VContainer.ContainerBuilderExtensions.Register<TopXTop.Enemy.EnemyPoolGlue>(builder, VContainer.Lifetime.Singleton);
+VContainer.ContainerBuilderExtensions.Register<TopXTop.Enemy.EnemySpawnGlue>(builder, VContainer.Lifetime.Singleton);
+var container = builder.Build();
+var hitBus = (TopXTop.Combat.CombatHitBus)container.Resolve(typeof(TopXTop.Combat.CombatHitBus));
+var pool = (TopXTop.Enemy.EnemyPoolGlue)container.Resolve(typeof(TopXTop.Enemy.EnemyPoolGlue));
+var spawner = (TopXTop.Enemy.EnemySpawnGlue)container.Resolve(typeof(TopXTop.Enemy.EnemySpawnGlue));
+var slime = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>("Assets/Prefabs/Enemy/Slime.prefab").GetComponent<TopXTop.Enemy.EnemyGlue>();
+var wolf = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>("Assets/Prefabs/Enemy/Wolf.prefab").GetComponent<TopXTop.Enemy.EnemyGlue>();
+var config = UnityEngine.Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<TopXTop.Difficulty.DifficultyConfig>("Assets/Configs/Difficulty/Difficulty2Config.asset"));
+var configData = new UnityEditor.SerializedObject(config);
+configData.FindProperty("enemies").GetArrayElementAtIndex(1).FindPropertyRelative("prefab").objectReferenceValue = wolf;
+configData.FindProperty("maxTotalSpawnCount").intValue = 10;
+configData.ApplyModifiedPropertiesWithoutUndo();
+try
+{
+    check(config.TryValidate(out _), "Overall above sum accepted Config");
+    spawner.Configure(config);
+    string[] cycle = { "Slime", "Slime", "Wolf", "Slime", "Slime", "Wolf" };
+    foreach (string expected in cycle)
+    {
+        check(spawner.TrySpawnNext(UnityEngine.Vector3.one, out var enemy), "Cycle spawn");
+        check(enemy.StatsConfig == (expected == "Slime" ? slime.StatsConfig : wolf.StatsConfig), "SlSlWolf cycle");
+        check(spawner.TryDespawn(enemy), "Cycle return");
+    }
+    check(spawner.TrySpawnNext(UnityEngine.Vector3.zero, out var first), "First");
+    var firstState = first.State;
+    check(spawner.TrySpawnNext(UnityEngine.Vector3.zero, out var second), "Second");
+    check(spawner.TrySpawnNext(UnityEngine.Vector3.zero, out var third), "Third");
+    check(!spawner.TrySpawnNext(UnityEngine.Vector3.zero, out _) && spawner.ActiveCount == 3, "All kinds full finite skip despite overall10");
+    check(spawner.GetFirstLivingEnemy() == first, "Oldest living target");
+    check(first.GetComponentInChildren<UnityEngine.SpriteRenderer>().sortingOrder == 2 && second.GetComponentInChildren<UnityEngine.SpriteRenderer>().sortingOrder == 1 && third.GetComponentInChildren<UnityEngine.SpriteRenderer>().sortingOrder == 0, "Oldest drawn in front");
+    firstState.ChangeHp(-firstState.MaxHp);
+    check(spawner.GetFirstLivingEnemy() == second, "Skip dead target");
+    check(spawner.TryDespawn(first) && !spawner.TryDespawn(first) && spawner.ActiveCount == 2 && spawner.GetActiveCount(slime) == 1, "Return once reduces counts");
+    check(spawner.TrySpawnNext(UnityEngine.Vector3.one, out var reused) && object.ReferenceEquals(first, reused), "Skip full wolf, reuse free slime");
+    check(!object.ReferenceEquals(firstState, reused.State) && reused.State.CurrentHp == slime.StatsConfig.BaseMaxHp && firstState.CurrentHp == 0, "New spawn state restored");
+    check(spawner.GetFirstLivingEnemy() == second && reused.GetComponentInChildren<UnityEngine.SpriteRenderer>().sortingOrder == 0 && second.GetComponentInChildren<UnityEngine.SpriteRenderer>().sortingOrder == 2, "Re-rental appended to end");
+    check(spawner.TryDespawn(second) && spawner.TryDespawn(third) && spawner.TryDespawn(reused), "Return remaining");
+    configData.Update();
+    configData.FindProperty("maxTotalSpawnCount").intValue = 1;
+    configData.ApplyModifiedPropertiesWithoutUndo();
+    spawner.Configure(config);
+    check(spawner.TrySpawnNext(UnityEngine.Vector3.zero, out var only) && !spawner.TrySpawnNext(UnityEngine.Vector3.zero, out _) && spawner.ActiveCount == 1, "Overall1 prevents extra even kind free");
+    check(spawner.TryDespawn(only), "Return overall1");
+    spawner.Configure(config);
+    foreach (string expected in cycle)
+    {
+        check(spawner.TrySpawnNext(UnityEngine.Vector3.zero, out var turnEnemy), "Saturated weighted spawn");
+        check(turnEnemy.StatsConfig == (expected == "Slime" ? slime.StatsConfig : wolf.StatsConfig), "Overall saturation preserves SlSlWolf cursor");
+        for (int retry = 0; retry < 3; retry++)
+            check(!spawner.TrySpawnNext(UnityEngine.Vector3.zero, out _), "Full does not consume turn");
+        check(spawner.TryDespawn(turnEnemy), "Saturated turn return");
+    }
+
+    var multiConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<TopXTop.Difficulty.DifficultyConfig>("Assets/Configs/Difficulty/Difficulty2Config.asset");
+    var multiPoint = new UnityEngine.GameObject("MultiTestPoint");
+    var multiAttack = new TopXTop.Skill.SkillUseBrick(new TopXTop.Combat.AttackBrick(new TopXTop.Enemy.EnemyState(60, 8, 0)), 1000, 1000);
+    var multiSchedule = new TopXTop.Enemy.SpawnScheduleBrick(1000);
+    var multiTick = new TopXTop.Simulation.SimulationTickGlue(multiAttack, spawner, multiSchedule, multiConfig, multiPoint.transform, hitBus, null, multiPoint.transform, multiPoint.transform, null, 1f);
+    multiTick.Start();
+    long multiStart = multiSchedule.NextSpawnAtMs - 1000;
+    check(spawner.ActiveCount == 1, "Startup only one despite cap3");
+    multiTick.TickAt(multiStart + 999);
+    check(spawner.ActiveCount == 1, "No early additional spawn");
+    multiTick.TickAt(multiStart + 1000);
+    check(spawner.ActiveCount == 2, "At one second only one added");
+    multiTick.TickAt(multiStart + 2000);
+    check(spawner.ActiveCount == 3, "At two seconds only one added");
+    while (spawner.GetFirstLivingEnemy() != null)
+        spawner.TryDespawn(spawner.GetFirstLivingEnemy());
+    multiTick.TickAt(multiStart + 10000);
+    check(spawner.ActiveCount == 1, "Late frame fills only one even with3 free slots");
+    multiTick.TickAt(multiStart + 10000);
+    check(spawner.ActiveCount == 1, "No same-time spawn backlog");
+    multiTick.Dispose();
+    while (spawner.GetFirstLivingEnemy() != null)
+        spawner.TryDespawn(spawner.GetFirstLivingEnemy());
+
+    var config1 = UnityEditor.AssetDatabase.LoadAssetAtPath<TopXTop.Difficulty.DifficultyConfig>("Assets/Configs/Difficulty/Difficulty1Config.asset");
+    var point = new UnityEngine.GameObject("TestPoint");
+    var attack = new TopXTop.Skill.SkillUseBrick(new TopXTop.Combat.AttackBrick(new TopXTop.Enemy.EnemyState(60, 8, 0)), 1000, 1000);
+    var frameSchedule = new TopXTop.Enemy.SpawnScheduleBrick(1000);
+    var tick = new TopXTop.Simulation.SimulationTickGlue(attack, spawner, frameSchedule, config1, point.transform, hitBus, null, point.transform, point.transform, null, 1f);
+    tick.Start();
+    long startMs = frameSchedule.NextSpawnAtMs - 1000;
+    var initial = spawner.GetFirstLivingEnemy();
+    var initialState = initial.State;
+    check(spawner.ActiveCount == 1 && initialState.CurrentHp == 45 && attack.NextUseAtMs == 0, "Immediate spawn and read-only first windup");
+    tick.TickAt(startMs + 199);
+    check(initialState.CurrentHp == 45 && attack.NextUseAtMs == 0, "No damage or cooldown before contact");
+    tick.TickAt(startMs + 200);
+    check(initialState.CurrentHp == 37 && attack.NextUseAtMs == startMs + 1200, "First hit and cooldown at contact");
+    tick.TickAt(startMs + 1199);
+    check(initialState.CurrentHp == 37, "No early damage");
+    for (int i = 1; i <= 4; i++)
+    {
+        tick.TickAt(startMs + 200 + i * 1000);
+        check(initialState.CurrentHp == 37 - i * 8, "1000ms HP progression");
+    }
+    tick.TickAt(startMs + 5200);
+    var respawned = spawner.GetFirstLivingEnemy();
+    check(initialState.CurrentHp == 0 && spawner.ActiveCount == 1 && respawned != null, "Death frees slot and replenishes in the same tick");
+    check(!object.ReferenceEquals(initialState, respawned.State) && respawned.State.CurrentHp == 45, "Replacement receives a new undamaged State");
+    check(!spawner.TryBeginDeath(initial, startMs + 5200), "Old death cannot release a live lease");
+    tick.TickAt(startMs + 6199);
+    check(spawner.ActiveCount == 1 && respawned.State.CurrentHp == 45, "Replacement retains previous cooldown");
+    tick.TickAt(startMs + 6200);
+    check(spawner.ActiveCount == 1 && respawned.State.CurrentHp == 37, "Replacement attacked when cooldown ends");
+    tick.Dispose();
+    int frozenHp = respawned.State.CurrentHp;
+    tick.TickAt(startMs + 20000);
+    check(respawned.State.CurrentHp == frozenHp, "Disposed tick stops");
+    notes.Add("TickAt: immediate spawn at " + startMs + "ms; first contact +200; HP37/29/21/13/5/death at +5200; same-tick replacement; next hit at +6200");
+    // 타입 등록으로 생성된 서비스의 실제 컨테이너 종료를 검사합니다.
+    container.Dispose();
+    check(spawner.IsDisposed && respawned == null, "Container disposes spawner and pool instances");
+    spawner.Dispose();
+    pool.Dispose();
+    notes.Add("등장 순서·표시 순서·재대여·DI 수명 종료 PASS");
+}
+finally
+{
+    container.Dispose();
+    spawner.Dispose();
+    pool.Dispose();
+    UnityEngine.Object.DestroyImmediate(config);
+    UnityEngine.SceneManagement.SceneManager.SetActiveScene(previousScene);
+    UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true);
+}
+check(previousScene.isDirty == previousDirty, "User scene unchanged by tests");
+for (int id = 1; id <= 5; id++)
+{
+    var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<TopXTop.Difficulty.DifficultyConfig>($"Assets/Configs/Difficulty/Difficulty{id}Config.asset");
+    int[] expected = { 1, 3, 3, 4, 5 };
+    check(asset.TryValidate(out _) && asset.MaxTotalSpawnCount == expected[id - 1], "Saved total " + id);
+}
+return Newtonsoft.Json.JsonConvert.SerializeObject(new { checks, notes, compilationFailed = UnityEditor.EditorUtility.scriptCompilationFailed, playing = UnityEditor.EditorApplication.isPlaying, sceneDirtyUnchanged = previousScene.isDirty == previousDirty });
+

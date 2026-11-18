@@ -17,6 +17,22 @@ namespace TopXTop.Enemy
         [SerializeField]
         private CharacterAnimationGlue animationGlue;
 
+        /// <summary>현재 대여의 체력을 표시할 월드 체력바입니다.</summary>
+        [SerializeField]
+        private EnemyHealthBarGlue healthBar;
+
+        /// <summary>후속 적이 제자리에서 외형을 드러내는 게임 시간입니다.</summary>
+        private const float SpawnFadeSeconds = 0.25f;
+
+        /// <summary>이번 대여의 페이드가 조절하는 본체 렌더러입니다.</summary>
+        private SpriteRenderer fadeRenderer;
+
+        /// <summary>이번 대여의 페이드가 복원할 원래 알파입니다.</summary>
+        private float originalAlpha;
+
+        /// <summary>이번 대여의 페이드가 시작된 뒤 흐른 게임 시간입니다.</summary>
+        private float fadeElapsed;
+
         /// <summary>현재 전투 Scope의 피격 신호를 받는 버스입니다.</summary>
         private CombatHitBus hitBus;
 
@@ -46,9 +62,66 @@ namespace TopXTop.Enemy
             }
         }
 
+        /// <summary>후속 대여의 본체를 투명한 상태에서 드러내기 시작합니다.</summary>
+        public void BeginSpawnFade()
+        {
+            FinishSpawnFade();
+            fadeRenderer = GetComponentInChildren<SpriteRenderer>(true);
+            if (fadeRenderer == null)
+            {
+                return;
+            }
+
+            originalAlpha = fadeRenderer.color.a;
+            SetSpawnAlpha(0f);
+        }
+
+        /// <summary>중앙 Tick의 게임 시간으로 현재 대여의 페이드를 갱신합니다.</summary>
+        /// <param name="deltaSeconds">이번 프레임에 흐른 게임 시간입니다.</param>
+        public void AdvanceSpawnFade(float deltaSeconds, float approachFraction = 0f)
+        {
+            if (fadeRenderer == null || deltaSeconds <= 0f)
+            {
+                return;
+            }
+
+            fadeElapsed = Mathf.Max(
+                fadeElapsed + deltaSeconds,
+                Mathf.Lerp(fadeElapsed, SpawnFadeSeconds, approachFraction));
+            if (fadeElapsed >= SpawnFadeSeconds)
+            {
+                FinishSpawnFade();
+                return;
+            }
+
+            SetSpawnAlpha(originalAlpha * (fadeElapsed / SpawnFadeSeconds));
+        }
+
+        /// <summary>현재 색의 RGB를 유지하며 페이드 알파만 반영합니다.</summary>
+        private void SetSpawnAlpha(float alpha)
+        {
+            Color color = fadeRenderer.color;
+            color.a = alpha;
+            fadeRenderer.color = color;
+            healthBar?.SetOpacity(alpha);
+        }
+
+        /// <summary>원래 알파를 복원하고 대여의 페이드 진행을 정리합니다.</summary>
+        public void FinishSpawnFade()
+        {
+            if (fadeRenderer != null)
+            {
+                SetSpawnAlpha(originalAlpha);
+            }
+
+            fadeRenderer = null;
+            fadeElapsed = 0f;
+        }
+
         /// <summary>지원하는 적에 한해 사망 연출을 시작합니다.</summary>
         public bool TryPlayDeath()
         {
+            FinishSpawnFade();
             return animationGlue != null && animationGlue.TryPlayDeath();
         }
 
@@ -83,6 +156,7 @@ namespace TopXTop.Enemy
 
             UnbindState();
             state = enemyState;
+            healthBar?.Bind(enemyState);
             if (animationGlue != null && hitBus != null)
             {
                 hitBus.Hit += OnHit;
@@ -100,11 +174,14 @@ namespace TopXTop.Enemy
             }
 
             body.sortingOrder = Mathf.Clamp(order, short.MinValue, short.MaxValue);
+            healthBar?.SetDisplayOrder(body.sortingOrder);
         }
 
         /// <summary>이번 대여의 피격 구독과 State 참조를 해제합니다.</summary>
         public void UnbindState()
         {
+            FinishSpawnFade();
+            healthBar?.Unbind();
             if (hitBus != null)
             {
                 hitBus.Hit -= OnHit;
